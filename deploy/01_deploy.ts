@@ -6,14 +6,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const {deploy} = hre.deployments;
     // proxy only in non-live network (localhost and hardhat network) enabling HCR (Hot Contract Replacement)
     // in live network, proxy is disabled and constructor is invoked
-  const greeter = await deploy('Greeter', {
+    await deploy('RockPaperScissors', {
         from: deployer,
-        args: ["Hello, Hardhat!"],
+        args: [10],
         log: true,
     });
-    console.log("Greeter deployed to:", greeter.address);
     // return !useProxy; // when live network, record the script as executed to prevent rexecution
 };
-func.id = 'deploy_greetings'; // id required to prevent reexecution
-func.tags = ['Greeter'];
+func.id = 'deploy_RockPaperScissors'; // id required to prevent reexecution
+func.tags = ['RockPaperScissors'];
 export default func;

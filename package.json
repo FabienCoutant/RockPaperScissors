@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test",
+    "typeschain": "npx hardhat compile",
+    "coverage": "npx hardhat coverage"
+
   },
   "keywords": [],
   "author": "FabienCoutant",
@@ -17,6 +20,7 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.7.6",
     "chai": "^4.3.4",
+    "chai-ethers": "^0.0.1",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
