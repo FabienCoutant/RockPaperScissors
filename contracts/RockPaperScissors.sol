@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "hardhat/console.sol";
 
+/**
+* @title RockPaperScissors
+* @notice The RockPaperScissors contract allow to play the rock paper scissors game
+* @dev The contract using commit & reveal pattern to avoid front-run
+*/
 contract RockPaperScissors {
 
     enum Choice {
@@ -40,6 +44,14 @@ contract RockPaperScissors {
         revealSpan = _revealSpan;
     }
 
+    /**
+     * @notice Allow a player to commit his choice hashed with a secret sentence
+     * @param _commitment The hashed input of player
+     * @dev The _commitment input must be created from player address, Choice choice and bytes32 variable
+     * on solidity side (cf. reveal function : keccak256(abi.encodePacked(msg.sender, _choice, _blindingFactor)))
+     * on front side (cf. test: ethers.utils.solidityKeccak256(['bytes', 'uint8', 'bytes'], [users[1].address, playerBChoice, playerBBlindingFactorBytes32]))
+     * the function emit and event with the player address
+     */
     function commit(bytes32 _commitment) public {
         // Only run during commit stages
         require(stage < Stage.FirstReveal, "Err! Wrong stage");
@@ -56,6 +68,13 @@ contract RockPaperScissors {
 
     }
 
+    /**
+     * @notice Allow players to reveal his choice by providing the choice and the bytes sentence used
+     * @param _choice The player choice following the enum
+     * @param _blindingFactor The player sentence used for the hashing
+     * @dev The choice is validated if keccak256(abi.encodePacked(msg.sender, _choice, _blindingFactor))) equal the sentence committed by the player
+     * the function emit and event with the player address and his choice
+     */
     function reveal(Choice _choice, bytes32 _blindingFactor) public {
         require(stage == Stage.FirstReveal || stage == Stage.SecondReveal, "Err! Wrong stage");
 
@@ -84,6 +103,11 @@ contract RockPaperScissors {
         else stage = Stage.Result;
     }
 
+    /**
+     * @notice Allow anybody to call the result
+     * @dev only callable if both player reveal their choice of if one player reveal it and current block number passed revealDeadLine
+     * the function emit and event with the result of the game, then reset all states for new game
+     */
     function result() public{
         require(stage == Stage.Result || (stage == Stage.SecondReveal && revealDeadLine <= block.number), "Err! Wrong stage");
 
